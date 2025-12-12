@@ -2,54 +2,56 @@
 #include <string>
 using namespace std;
 
+// goes through the input to make sure it's purely integers, no mixture of anything 
+bool isNumber(const string& s) {
+    for (char c : s) {
+        if (!isdigit(c)) return false;
+    }
+    return true;
+}
+
 void insertRow()
 {
-    bool validID, validstatus;
-    string name, studentID, status;
-    
-    cout << "---------------------------" << endl;
-    cout << "Insert New Attendance Row" << endl;
-    cout << "---------------------------" << endl;
+    string idInput;
+    int studentID;
+    int status;
+    string name;
 
-    cout << "Enter StudentID: " << endl;
-    cin >> studentID;
+    cout << "---------------------------\n";
+    cout << "Insert New Attendance Row\n";
+    cout << "---------------------------\n";
 
-    do {
+    while (true) {
         cout << "Enter StudentID: ";
-        cin >> studentID;
-        
-        validID = true;
-        for (int i = 0; i < studentID.length(); i++) {
-            if (studentID[i] < '0' || studentID[i] > '9') {
-                validID = false;
-                break;
-            }
-        }
-        
-        if (!validID) {
-            cout << "Error: Invalid INT value. Please enter a number." << endl;
-        }
-    } while (!validID);
+        cin >> idInput;
 
+        //using isNumber to check if idInput has only digits
+        if (isNumber(idInput)) {
+            studentID = stoi(idInput); //converts string to int
+            break;
+        }
+
+        cout << "Error: Invalid INT value. Please enter a number." << endl;
+    }
+
+    cin.ignore(10000, '\n'); // clear leftover newline
+
+    //gets input for name
     cout << "Enter name: ";
-    cin.ignore();
     getline(cin, name);
 
-    do {
+    //check if status input is 0 or 1 only
+    while (true) {
         cout << "Enter Status (Present: 1, Absent: 0): ";
-        cin >> status;
-        
-        validstatus = true;
-        if (status != "0" && status != "1") {
-            cout << "Error: Invalid value. Please enter either '0' or '1'.";
-            validstatus = false;
-        }
-        
-        if (!validstatus) {
-            cout << "Error: Invalid INT value. Please enter a number." << endl;
-        }
-    } while (!validstatus);
+        cin >> idInput;
 
+        if (idInput == "0" || idInput == "1") {
+            status = stoi(idInput);
+            break;
+        }
+
+        cout << "Error: Invalid value. Please enter either 0 or 1." << endl;
+    }
 }
 
 int main() {
