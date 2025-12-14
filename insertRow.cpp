@@ -52,6 +52,13 @@ void insertRow()
 
         cout << "Error: Invalid value. Please enter either 0 or 1." << endl;
     }
+
+    attendanceSheet[nextRow][0] = studentID;
+    attendanceSheet[nextRow][1] = name;
+    attendanceSheet[nextRow][2] = status;
+    nextRow++;
+
+    cout << "Row inserted successfully!" << endl;
 }
 
 int main() {
