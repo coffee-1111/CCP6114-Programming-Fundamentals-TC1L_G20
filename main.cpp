@@ -1,3 +1,22 @@
+// *********************************************************
+// Program: TC1L_Group20_main.cpp
+// Course: CCP6114 Programming Fundamentals
+// Lecture Class: TC1L
+// Tutorial Class: TT2L + TT3L
+// Trimester: 2530
+// Member_1: 252UC2439Z | Gan Kai Li Kelly | gan.kai.li1@student.mmu.edu.my | 0168229518
+// Member_2: 252UC2457P | Ashton Shino Lim | EMAIL | PHONE
+// Member_3: 252UC2432F | Eryne Chuah Ee Wen | EMAIL | PHONE
+// Member_4: 252UC242S4 | Lai Jia Han | EMAIL | PHONE
+// *********************************************************
+// Task Distribution
+// Member_1:
+// Member_2:
+// Member_3:
+// Member_4:
+// *********************************************************
+
+
 #include <iostream>
 #include <string>
 #include <limits>
