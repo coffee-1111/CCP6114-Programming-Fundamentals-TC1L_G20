@@ -166,53 +166,88 @@ void createSheet()
 
 void insertRow()
 {
-    string idInput;
-    int studentID;
-    int status;
-    string name;
-
+    if (numcolumn == 0) {
+        cout << "Error: Please create a sheet first!" << endl;
+        return;
+    }
+    
     cout << "---------------------------\n";
     cout << "Insert New Attendance Row\n";
     cout << "---------------------------\n";
 
-    while (true) {
-        cout << "Enter StudentID: ";
-        cin >> idInput;
-
-        //using isNumber to check if idInput has only digits
-        if (isNumber(idInput)) {
-            studentID = stoi(idInput); //converts string to int
-            break;
+    string input;
+    
+    for (int col = 0; col < numcolumn; col++) {
+        bool validInput = false;
+        
+        while (!validInput) {
+            // Check if column name is "Status" to show special prompt
+            if (column_name[col] == "Status" || column_name[col] == "status") {
+                cout << "Enter Status (Present: 1, Absent: 0): ";
+            } else {
+                cout << "Enter " << column_name[col] << ": ";
+            }
+            
+            if (column_type[col] == "INT") {
+                // For INT - use cin >>
+                cin >> input;
+                
+                // Special validation for Status column
+                if (column_name[col] == "Status" || column_name[col] == "status") {
+                    if (isNumber(input) && (input == "0" || input == "1")) {
+                        attendanceSheet[nextRow][col] = input;
+                        validInput = true;
+                    } else {
+                        cout << "Error: Please enter 0 (Absent) or 1 (Present) only." << endl;
+                        cin.clear();
+                        cin.ignore(10000, '\n');
+                    }
+                } 
+                else {
+                    // Normal INT validation for other columns
+                    if (isNumber(input)) {
+                        attendanceSheet[nextRow][col] = input;
+                        validInput = true;
+                    } else {
+                        cout << "Error: Must be a number. Please enter again." << endl;
+                        cin.clear();
+                        cin.ignore(10000, '\n');
+                    }
+                }
+            } 
+            else if (column_type[col] == "TEXT") {
+                // If this is the FIRST input or previous was INT, clear buffer
+                if (col == 0 || column_type[col - 1] == "INT") {
+                    // This clears any leftover newline from menu or previous INT input
+                    cin.ignore(10000, '\n');
+                }
+                
+                getline(cin, input);
+                
+                // Special validation for TEXT Status column
+                if (column_name[col] == "Status" || column_name[col] == "status") {
+                    if (input == "0" || input == "1") {
+                        attendanceSheet[nextRow][col] = input;
+                        validInput = true;
+                    } else {
+                        cout << "Error: Please enter 0 (Absent) or 1 (Present) only." << endl;
+                    }
+                }
+                else {
+                    // Normal TEXT validation for other columns
+                    if (!input.empty()) {
+                        attendanceSheet[nextRow][col] = input;
+                        validInput = true;
+                    } else {
+                        cout << "Error: Cannot be empty. Please enter again." << endl;
+                    }
+                }
+            }
         }
-
-        cout << "Error: Invalid INT value. Please enter a number." << endl;
     }
-
-    cin.ignore(10000, '\n'); // clear leftover newline
-
-    //gets input for name
-    cout << "Enter name: ";
-    getline(cin, name);
-
-    //check if status input is 0 or 1 only
-    while (true) {
-        cout << "Enter Status (Present: 1, Absent: 0): ";
-        cin >> idInput;
-
-        if (idInput == "0" || idInput == "1") {
-            status = stoi(idInput);
-            break;
-        }
-
-        cout << "Error: Invalid value. Please enter either 0 or 1." << endl;
-    }
-
-    attendanceSheet[nextRow][0] = studentID;
-    attendanceSheet[nextRow][1] = name;
-    attendanceSheet[nextRow][2] = status;
+    
     nextRow++;
-
-    cout << "Row inserted successfully!" << endl;
+    cout << "\nRow inserted successfully!" << endl;
 }
 
 void viewCSV()
