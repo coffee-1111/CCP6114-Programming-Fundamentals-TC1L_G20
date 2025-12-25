@@ -42,10 +42,20 @@ int nextRow = 0;
 //Support Functions
 //--------------------------
 
-//for insertRow
+//for insertRow - check if the input only contains numbers
 bool isNumber(const string& s) {
     for (char c : s) {
         if (!isdigit(c)) return false;
+    }
+    return true;
+}
+
+bool onlyLetters(const string& s) {
+    if (s.empty()) return false;
+    for (char c : s){
+        if (!isalpha(c) && c!= ' '){
+            return false;
+        }
     }
     return true;
 }
@@ -177,6 +187,9 @@ void insertRow()
 
     string input;
     
+    // Clear any leftover newline from the menu
+    cin.ignore(10000, '\n');
+    
     for (int col = 0; col < numcolumn; col++) {
         bool validInput = false;
         
@@ -189,8 +202,8 @@ void insertRow()
             }
             
             if (column_type[col] == "INT") {
-                // For INT - use cin >>
-                cin >> input;
+                // For INT columns - read the whole line then validate
+                getline(cin, input);
                 
                 // Special validation for Status column
                 if (column_name[col] == "Status" || column_name[col] == "status") {
@@ -199,8 +212,6 @@ void insertRow()
                         validInput = true;
                     } else {
                         cout << "Error: Please enter 0 (Absent) or 1 (Present) only." << endl;
-                        cin.clear();
-                        cin.ignore(10000, '\n');
                     }
                 } 
                 else {
@@ -210,18 +221,10 @@ void insertRow()
                         validInput = true;
                     } else {
                         cout << "Error: Must be a number. Please enter again." << endl;
-                        cin.clear();
-                        cin.ignore(10000, '\n');
                     }
                 }
             } 
             else if (column_type[col] == "TEXT") {
-                // If this is the FIRST input or previous was INT, clear buffer
-                if (col == 0 || column_type[col - 1] == "INT") {
-                    // This clears any leftover newline from menu or previous INT input
-                    cin.ignore(10000, '\n');
-                }
-                
                 getline(cin, input);
                 
                 // Special validation for TEXT Status column
@@ -235,11 +238,13 @@ void insertRow()
                 }
                 else {
                     // Normal TEXT validation for other columns
-                    if (!input.empty()) {
+                    if (input.empty()) {
+                        cout << "Error: Cannot be empty. Please enter again." << endl;
+                    } else if (!onlyLetters(input)) {
+                        cout << "Error: Must contain only letters (a-z, A-Z) and spaces. Please enter again." << endl;
+                    } else {
                         attendanceSheet[nextRow][col] = input;
                         validInput = true;
-                    } else {
-                        cout << "Error: Cannot be empty. Please enter again." << endl;
                     }
                 }
             }
