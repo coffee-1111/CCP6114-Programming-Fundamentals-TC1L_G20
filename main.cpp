@@ -20,6 +20,7 @@
 #include <iostream>
 #include <string>
 #include <limits>
+#include <cctype>
 
 using namespace std;
 
@@ -117,11 +118,32 @@ void createSheet()
          
         }
 
-        // For column type （ INT/ TEXT）
-        //
-        //
 
-        cout << "Column "<< colNum << " name :" << column_name[i] << endl << endl;
+        // For column type （ INT/ TEXT）
+        cout << "Enter column " << colNum << " type( INT or TEXT ): " << endl ;
+        getline(cin, column_type[i]);
+
+        for (int k = 0; k < column_type[i].length(); k++)  // let int / text become INT /TEXT
+         {
+           column_type[i][k] = toupper(column_type[i][k]);
+         }
+
+
+        while(column_type[i].empty() || (column_type[i] != "INT" && column_type[i] != "TEXT"))
+        {
+         cout << "Invalid column type! Please enter INT or TEXT only. " << endl;
+         cout << "Enter column " << colNum << " type( INT or TEXT ): " << endl ;
+         getline(cin, column_type[i]);
+
+
+         for (int k = 0; k < column_type[i].length(); k++)
+         {
+           column_type[i][k] = toupper(column_type[i][k]);
+         }
+         
+        }
+
+        cout << "Column "<< colNum << " name :" << column_name[i] <<" (" << column_type[i]<< ") " << endl << endl;
         
         i = i + 1 ;
         colNum = colNum + 1;
@@ -135,7 +157,7 @@ void createSheet()
 
    while(j < numcolumn)
         {
-          cout << " Column " << (j + 1) << " name: " << column_name[j] << endl; /// column type also use this one to display
+          cout << " Column " << (j + 1) << " name: " << column_name[j] <<" (" << column_type[j]<< ") " << endl; /// column type also use this one to display
               
           j = j + 1;
         }
