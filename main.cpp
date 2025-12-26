@@ -336,7 +336,7 @@ void mainMenu() {
                     
                     while (true) {
                         cout << "\nDo you want to add another row? (y/n): ";
-                        getline(cin, continueStr); // 使用 getline 读取整行输入
+                        getline(cin, continueStr); 
 
                         // only pass when 'y','Y','n' or 'N'
                         if (continueStr.length() == 1 && 
