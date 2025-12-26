@@ -5,15 +5,15 @@
 // Tutorial Class: TT2L + TT3L
 // Trimester: 2530
 // Member_1: 252UC2439Z | Gan Kai Li Kelly | gan.kai.li1@student.mmu.edu.my | 0168229518
-// Member_2: 252UC2457P | Ashton Shino Lim | EMAIL | PHONE
+// Member_2: 252UC2457P | Ashton Shino Lim | ashton.shino.lim1@student.mmu.edu.my | 01110138115
 // Member_3: 252UC2432F | Eryne Chuah Ee Wen | ERYNE.CHUAH.EE1@student.mmu.edu.my | 0163591686
-// Member_4: 252UC242S4 | Lai Jia Han | EMAIL | PHONE
+// Member_4: 252UC242S4 | Lai Jia Han | lai.jia.han1@student.mmu.edu.my | 01110900316
 // *********************************************************
 // Task Distribution
-// Member_1:
-// Member_2:
+// Member_1: main menu function
+// Member_2: view csv function
 // Member_3: insertRow function
-// Member_4:
+// Member_4: create column function
 // *********************************************************
 
 
@@ -187,8 +187,6 @@ void insertRow()
 
     string input;
     
-    // Clear any leftover newline from the menu
-    cin.ignore(10000, '\n');
     
     for (int col = 0; col < numcolumn; col++) {
         bool validInput = false;
@@ -326,14 +324,33 @@ void mainMenu() {
         
         else if (choice == 2) {
             if (isSheetCreated == true) {
-                char continueInput = 'y';
+
+                // clear input '2' after enter
+                cin.ignore(numeric_limits<streamsize>::max(), '\n'); 
+
+                string continueStr = "y"; 
                 
-                while (continueInput == 'y' || continueInput == 'Y') {
+                while (continueStr == "y" || continueStr == "Y") {
                     
                     insertRow(); 
                     
-                    cout << "\nDo you want to add another row? (y/n): ";
-                    cin >> continueInput;
+                    while (true) {
+                        cout << "\nDo you want to add another row? (y/n): ";
+                        getline(cin, continueStr); // 使用 getline 读取整行输入
+
+                        // only pass when 'y','Y','n' or 'N'
+                        if (continueStr.length() == 1 && 
+                           (continueStr[0] == 'y' || continueStr[0] == 'Y' || 
+                            continueStr[0] == 'n' || continueStr[0] == 'N')) {
+                            break; 
+                        } 
+                        else {
+                            cout << "Invalid input. Please enter exactly 'y' or 'n'." << endl;
+                        }
+                    }
+                    
+                    // convert all user input to lowercase for easier processing in the outer while loop
+                    if (continueStr.length() == 1) continueStr[0] = tolower(continueStr[0]);
                     
                     cout << endl; 
                 }
