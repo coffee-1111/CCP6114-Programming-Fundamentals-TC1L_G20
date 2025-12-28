@@ -360,12 +360,9 @@ void mainMenu() {
         }
 
         else if (choice == 3) {
-            if (isSheetCreated == true) {
-                viewCSV();
-            } else {
-                cout << "Error: Please create a sheet first (Option 1)." << endl;
-            }
+            viewCSV();   
         }
+
 
         else if (choice == 4) {
             cout << "Exiting program..." << endl;
