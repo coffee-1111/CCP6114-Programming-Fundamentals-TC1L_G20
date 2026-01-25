@@ -10,10 +10,10 @@
 // Member_4: 252UC242S4 | Lai Jia Han | lai.jia.han1@student.mmu.edu.my | 01110900316
 // *********************************************************
 // Task Distribution
-// Member_1: main menu function
-// Member_2: view csv function
-// Member_3: insertRow function
-// Member_4: create column function
+// Member_1:
+// Member_2:
+// Member_3: 
+// Member_4: 
 // *********************************************************
 
 
@@ -36,6 +36,9 @@ string column_type[10];
 //2.for insertRow
 string attendanceSheet[50][10];   
 int nextRow = 0;
+
+//3.for database
+string schoolTermName = "Not Set";
 
 
 //-------------------------
@@ -290,6 +293,53 @@ void viewCSV()
     }
 }
 
+void count_Rows(){
+    if (numcolumn == 0) 
+    {
+        cout << "Error: Please create a sheet first." << endl;
+        return;
+    }
+
+    int count = 0;
+
+    for (int i = 0; i < nextRow; i++) 
+    {
+        if (!attendanceSheet[i][0].empty()) 
+        {
+            count++;
+        }
+    }
+
+    cout << "--------------------" << endl;
+    cout << "Count Rows" << endl;
+    cout << "--------------------" << endl;
+    cout << "Number of rows: " << count << endl;
+
+}
+
+void schoolTerm() {
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    cout << "Enter School Term Name: ";
+    getline(cin, schoolTermName);
+    cout << "Term Name updated to: " << schoolTermName << endl;
+}
+
+void loadFromFile() {
+    cout << "(Load function called (dummy) )" << endl;
+}
+
+void saveToFile() {
+    cout << "(Save function called (dummy) )" << endl;
+}
+
+void updateRow() {
+    cout << "(Update Row function called (dummy) )" << endl;
+}
+
+void deleteRow() {
+    cout << "(Delete Row function called (dummy) )" << endl;
+}
+
 //------------------------
 //Main Menu
 //------------------------
@@ -298,14 +348,25 @@ void mainMenu() {
     int choice;
     bool isSheetCreated = false;
 
+    loadFromFile();
+
+    if (numcolumn > 0) {
+        isSheetCreated = true;
+    }
+
     do {
-        cout << "==============================" << endl;
-        cout << " Student Attendance Tracker Menu " << endl;
-        cout << "==============================" << endl;
-        cout << "1. Create Attendance Sheet" << endl;
-        cout << "2. Insert Attendance Row" << endl;
-        cout << "3. View Attendance Sheet (CSV)" << endl;
-        cout << "4. Exit" << endl;
+        cout << "==============================================" << endl;
+        cout << "      STUDENT ATTENDANCE TRACKER - MILESTONE 2" << endl;
+        cout << "      Current Term: " << schoolTermName << endl;
+        cout << "==============================================" << endl;
+        cout << "1. Create School Term" << endl;
+        cout << "2. Create Attendance Sheet" << endl;
+        cout << "3. Insert Attendance Row" << endl;
+        cout << "4. Update Attendance Row" << endl;
+        cout << "5. Delete Attendance Row" << endl;
+        cout << "6. View Attendance Sheet (CSV)" << endl;
+        cout << "7. Count Rows" << endl;
+        cout << "8. Save & Exit" << endl;
         cout << "Enter your choice: ";
 
         cin >> choice;
@@ -318,11 +379,27 @@ void mainMenu() {
         }
 
         if (choice == 1) {
-            createSheet(); 
-            isSheetCreated = true; 
+            if (schoolTermName != "Not Set") {
+                cout << "Error: School Term has already been created (" << schoolTermName << ")." << endl;
+            } 
+            else {
+                schoolTerm();
+            }
+        }
+
+        else if (choice == 2) {
+            if (isSheetCreated) {
+                cout << "Error: Attendance Sheet already exists." << endl;
+            } 
+            else {
+                createSheet();
+                if (numcolumn > 0) { 
+                    isSheetCreated = true; 
+                }
+            }
         }
         
-        else if (choice == 2) {
+        else if (choice == 3) {
             if (isSheetCreated == true) {
 
                 // clear input '2' after enter
@@ -359,22 +436,42 @@ void mainMenu() {
             }
         }
 
-        else if (choice == 3) {
+        else if (choice == 4) {
+            if (isSheetCreated) {
+                updateRow();
+            } else {
+                cout << "Error: Please create a sheet first." << endl;
+            }
+        }
+
+        else if (choice == 5) {
+            if (isSheetCreated) {
+                deleteRow();
+            } else {
+                cout << "Error: Please create a sheet first." << endl;
+            }
+        }
+
+        else if (choice == 6) {
             viewCSV();   
         }
 
+        else if (choice == 7) {
+            count_Rows();
+        }    
 
-        else if (choice == 4) {
-            cout << "Exiting program..." << endl;
+        else if (choice == 8) {
+            saveToFile();
+            cout << "Data saved. Exiting program..." << endl;
         }
 
         else {
-            cout << "Invalid option. Please enter 1 - 4." << endl;
+            cout << "Invalid option. Please enter 1 - 8." << endl;
         }
 
         cout << endl;
 
-    } while (choice != 4);
+    } while (choice != 8);
 }
 
 
