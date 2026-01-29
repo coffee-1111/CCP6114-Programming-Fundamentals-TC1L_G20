@@ -482,7 +482,7 @@ void updateRow()
 
     viewCSV();
 
-    cout << "Enter StudentID to update: ";
+    cout << "Enter StudentID to update: " << endl;
     cin >> studentID;
 
     targetRow = -1;
@@ -510,14 +510,14 @@ void updateRow()
 
     if (targetRow == -1)
     {
-        cout << "Error: StudentID not found";
+        cout << "Error: StudentID not found" << endl;
         return;
     }
 
-    cout << "Choose one to update";
-    cout << "1. Name";
-    cout << "2. Status";
-    cout << "-1. Exit";
+    cout << "Choose one to update" << endl;
+    cout << "1. Name" << endl;
+    cout << "2. Status" << endl;
+    cout << "-1. Exit" << endl;
 
     int choice = 0;
 
@@ -528,7 +528,7 @@ void updateRow()
 
         if (!isNumber(to_string(choice)))
         {
-            cout << "Error: Please enter a number";
+            cout << "Error: Please enter a number" << endl;
             choice = 0;
             continue;
         }
@@ -536,7 +536,7 @@ void updateRow()
 
     if (choice == -1)
     {
-        cout << "Update cancelled";
+        cout << "Update cancelled" << endl;
         return;
     }
 
@@ -557,7 +557,7 @@ void updateRow()
 
         if (nameColumn == -1)
         {
-            cout << "Error: Name column not found";
+            cout << "Error: Name column not found" << endl;
             return;
         }
 
@@ -568,9 +568,9 @@ void updateRow()
         while (newname == " " || !onlyLetters(newname))
         {
             if (newname == " "){
-                cout << "Error: Name cannot be empty";
+                cout << "Error: Name cannot be empty" << endl;
             }else{
-                cout << "Error: Name must contain only letters and spaces";
+                cout << "Error: Name must contain only letters and spaces" << endl;
             }
             
             cout << "Enter new name: ";
@@ -596,7 +596,7 @@ void updateRow()
 
         if (statusColumn == -1)
         {
-            cout << "Error: Status column not found";
+            cout << "Error: Status column not found" << endl;
             return;
         }
 
@@ -606,16 +606,16 @@ void updateRow()
 
         while (newStatus != "0" && newStatus != "1")
         {
-            cout << "Error: Please enter 0 (Absent) or 1 (Present) only.";
-            cout << "Enter new Status: ";
+            cout << "Error: Please enter 0 (Absent) or 1 (Present) only." << endl;
+            cout << "Enter new Status: " << endl;
             cin >> newStatus;
         }
 
         attendanceSheet[targetRow][statusColumn] = newStatus;
-        cout << "Status updated successfully";
+        cout << "Status updated successfully" << endl;
     }
 
-    cout << "Updated sheet: ";
+    cout << "Updated sheet: " << endl;
     viewCSV();
 }
 
@@ -625,7 +625,7 @@ void deleteRow()
 
     if (numcolumn == 0 || nextRow == 0)
     {
-        cout << "Error: No data available to delete!";
+        cout << "Error: No data available to delete!" << endl;
         return;
     }
     cout << "--------------------------------";
@@ -659,7 +659,7 @@ void deleteRow()
 
         if (targetRow == -1)
         {
-            cout << "Error: StudentID not found";
+            cout << "Error: StudentID not found" << endl;
             return;
         }
 
@@ -677,8 +677,8 @@ void deleteRow()
 
         nextRow = -1;
 
-        cout << "Row deleted successfully";
-        cout << "Updated sheet: ";
+        cout << "Row deleted successfully" << endl;
+        cout << "Updated sheet: " << endl;
         viewCSV();
     }
 }
