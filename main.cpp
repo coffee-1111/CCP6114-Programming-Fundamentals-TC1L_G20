@@ -12,8 +12,8 @@
 // Task Distribution
 // Member_1:
 // Member_2:
-// Member_3: 
-// Member_4: 
+// Member_3:
+// Member_4:
 // *********************************************************
 
 
@@ -36,7 +36,7 @@ string column_name[10];
 string column_type[10];
 
 //2.for insertRow
-string attendanceSheet[50][10];   
+string attendanceSheet[50][10];
 int nextRow = 0;
 
 //3.for database
@@ -69,7 +69,7 @@ bool onlyLetters(const string& s) {
 //for Sheet_create
 int getValidColumn()
 {
-   int numcolumn ; 
+   int numcolumn ;
    cout << "Define number of columns (max 10) : " << endl;
    cin  >> numcolumn;
 
@@ -84,8 +84,8 @@ int getValidColumn()
       cin  >> numcolumn ;
 
      }
-   
-     cin.ignore(1000, '\n'); 
+
+     cin.ignore(1000, '\n');
      return numcolumn;
 }
 
@@ -99,7 +99,7 @@ bool readFromFile(string filename)
     ifstream file(filename);
 
     if (!file)
-    {   
+    {
         cout << "Reading attendance data from file..." << endl;
         cout << "Error: Unable to open file." << endl;
         return false;
@@ -126,8 +126,8 @@ bool readFromFile(string filename)
 
             column_name[numcolumn] = col;
             // Default type to TEXT when loading from file (since CSV doesn't store types)
-            column_type[numcolumn] = "TEXT"; 
-            
+            column_type[numcolumn] = "TEXT";
+
             // Auto-detect Status column for validation later
             if(col == "Status" || col == "status") column_type[numcolumn] = "INT"; // Usually status is 0/1
 
@@ -193,12 +193,29 @@ void writeToFile(string filename)
     }
 
     file.close();
-    cout << "Output saved as: " << filename << endl;
 
-    ofstream list("file_list.txt",ios::app);
-    list << filename << endl;
-    list.close();
-    cout << "File saved and added to database list." << endl;
+    ifstream checkFile("file_list.txt");
+    string existingName;
+    bool alreadyExists = false;
+
+    while(getline(checkFile,existingName))
+      {
+        if (existingName == filename)
+        {
+          alreadyExists = true;
+          break;
+        }
+      }
+    checkFile.close();
+
+    if (!alreadyExists)
+    {
+      ofstream list("file_list.txt",ios :: app);
+      list << filename << endl;
+      list.close();
+    }
+
+    cout << "File saved." << endl;
 }
 
 void saveTerm(string name)
@@ -261,16 +278,16 @@ void createSheet()
    cout << "\nAttendance sheet " << sheet_name << " created successfully" << endl << endl;
 
    numcolumn = getValidColumn(); ///get column from function
-   
-   int i = 0; 
+
+   int i = 0;
    int colNum = 1;
 
-  
+
    while(i < numcolumn)
      {
         cout << "Enter column " << colNum << " name: " << endl ;
         getline(cin, column_name[i]);
-      
+
         while(column_name[i].empty())
         {
          cout << "Column name connot be empty! Please enter again. " << endl;
@@ -297,15 +314,15 @@ void createSheet()
          {
            column_type[i][k] = toupper(column_type[i][k]);
          }
-         
+
         }
-        
+
         cout << "Column "<< colNum << " name :" << column_name[i] <<" (" << column_type[i]<< ") " << endl << endl;
-        
+
         i = i + 1 ;
         colNum = colNum + 1;
      }
-     
+
    nextRow = 0;
 
    cout << "Sheet Structure created successfully" << endl << endl ;
@@ -318,7 +335,7 @@ void createSheet()
    while(j < numcolumn)
         {
           cout << " Column " << (j + 1) << " name: " << column_name[j] << " (" << column_type [j] << ")" <<endl; /// column type also use this one to display
-              
+
           j = j + 1;
         }
 
@@ -331,17 +348,17 @@ void insertRow()
         cout << "Error: Please create a sheet first!" << endl;
         return;
     }
-    
+
     cout << "---------------------------\n";
     cout << "Insert New Attendance Row\n";
     cout << "---------------------------\n";
 
     string input;
-    
-    
+
+
     for (int col = 0; col < numcolumn; col++) {
         bool validInput = false;
-        
+
         while (!validInput) {
             // Check if column name is "Status" to show special prompt
             if (column_name[col] == "Status" || column_name[col] == "status") {
@@ -349,11 +366,11 @@ void insertRow()
             } else {
                 cout << "Enter " << column_name[col] << ": ";
             }
-            
+
             if (column_type[col] == "INT") {
                 // For INT columns - read the whole line then validate
                 getline(cin, input);
-                
+
                 // Special validation for Status column
                 if (column_name[col] == "Status" || column_name[col] == "status") {
                     if (isNumber(input) && (input == "0" || input == "1")) {
@@ -362,7 +379,7 @@ void insertRow()
                     } else {
                         cout << "Error: Please enter 0 (Absent) or 1 (Present) only." << endl;
                     }
-                } 
+                }
                 else {
                     // Normal INT validation for other columns
                     if (isNumber(input)) {
@@ -372,10 +389,10 @@ void insertRow()
                         cout << "Error: Must be a number. Please enter again." << endl;
                     }
                 }
-            } 
+            }
             else if (column_type[col] == "TEXT") {
                 getline(cin, input);
-                
+
                 // Special validation for TEXT Status column
                 if (column_name[col] == "Status" || column_name[col] == "status") {
                     if (input == "0" || input == "1") {
@@ -399,7 +416,7 @@ void insertRow()
             }
         }
     }
-    
+
     nextRow++;
     cout << "\nRow inserted successfully!" << endl;
 }
@@ -444,7 +461,7 @@ void viewCSV()
 }
 
 void count_Rows(){
-    if (numcolumn == 0) 
+    if (numcolumn == 0)
     {
         cout << "Error: Please create a sheet first." << endl;
         return;
@@ -452,9 +469,9 @@ void count_Rows(){
 
     int count = 0;
 
-    for (int i = 0; i < nextRow; i++) 
+    for (int i = 0; i < nextRow; i++)
     {
-        if (!attendanceSheet[i][0].empty()) 
+        if (!attendanceSheet[i][0].empty())
         {
             count++;
         }
@@ -500,7 +517,7 @@ void updateRow()
             }
             col++;
         }
-        
+
         if (targetRow != -1)
         {
             break;
@@ -572,7 +589,7 @@ void updateRow()
             }else{
                 cout << "Error: Name must contain only letters and spaces" << endl;
             }
-            
+
             cout << "Enter new name: ";
             cin >> newname;
         }
@@ -675,7 +692,7 @@ void deleteRow()
             row++;
         }
 
-        nextRow = -1;
+        nextRow --;
 
         cout << "Row deleted successfully" << endl;
         cout << "Updated sheet: " << endl;
@@ -691,7 +708,7 @@ void setupDatabase()
 {
   cout << " Create School Term (Database) " << endl;
 
-  //loading Term 
+  //loading Term
   string saved_term = loadTerm();
   if (saved_term != "" && saved_term !=" ")
   {
@@ -740,7 +757,7 @@ void fileLoadDatabase()
   {
     bool file_found = readFromFile(filename);
     while (!file_found)
-    {    
+    {
       cout <<"Please enter again (or -1 to skip to Menu):" << endl;
       cin >> filename;
 
@@ -748,16 +765,16 @@ void fileLoadDatabase()
       {
        cout << "Skipping to Main Menu..." << endl;
        break;
-       
+
       }
-      
+
       file_found = readFromFile(filename);
-    
+
     }
 
     if (file_found)
     {
-      
+
       cout << "---------------------------------------"<< endl;
       cout << "Current Attendance Sheet - "<< schoolTermName << endl;
       viewCSV();
@@ -784,7 +801,7 @@ void mainMenu() {
 
     // 1. Initial Setup
     setupDatabase();
-    
+
     // 2. Load existing Data
     fileLoadDatabase();
 
@@ -809,7 +826,7 @@ void mainMenu() {
 
         cin >> choice;
 
-        //avoid infinite loops when user input char or string 
+        //avoid infinite loops when user input char or string
         if (cin.fail()) {
             cin.clear(); // clear error flags
             cin.ignore(numeric_limits<streamsize>::max(), '\n'); // clean cache
@@ -819,7 +836,7 @@ void mainMenu() {
         if (choice == 1) {
             if (schoolTermName != "Not Set") {
                 cout << "Error: School Term has already been created (" << schoolTermName << ")." << endl;
-            } 
+            }
             else {
                 schoolTerm();
             }
@@ -828,46 +845,46 @@ void mainMenu() {
         else if (choice == 2) {
             if (isSheetCreated) {
                 cout << "Error: Attendance Sheet already exists." << endl;
-            } 
+            }
             else {
                 createSheet();
-                if (numcolumn > 0) { 
-                    isSheetCreated = true; 
+                if (numcolumn > 0) {
+                    isSheetCreated = true;
                 }
             }
         }
-        
+
         else if (choice == 3) {
             if (isSheetCreated == true) {
 
                 // clear input '2' after enter
-                cin.ignore(numeric_limits<streamsize>::max(), '\n'); 
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-                string continueStr = "y"; 
-                
+                string continueStr = "y";
+
                 while (continueStr == "y" || continueStr == "Y") {
-                    
-                    insertRow(); 
-                    
+
+                    insertRow();
+
                     while (true) {
                         cout << "\nDo you want to add another row? (y/n): ";
-                        getline(cin, continueStr); 
+                        getline(cin, continueStr);
 
                         // only pass when 'y','Y','n' or 'N'
-                        if (continueStr.length() == 1 && 
-                           (continueStr[0] == 'y' || continueStr[0] == 'Y' || 
+                        if (continueStr.length() == 1 &&
+                           (continueStr[0] == 'y' || continueStr[0] == 'Y' ||
                             continueStr[0] == 'n' || continueStr[0] == 'N')) {
-                            break; 
-                        } 
+                            break;
+                        }
                         else {
                             cout << "Invalid input. Please enter exactly 'y' or 'n'." << endl;
                         }
                     }
-                    
+
                     // convert all user input to lowercase for easier processing in the outer while loop
                     if (continueStr.length() == 1) continueStr[0] = tolower(continueStr[0]);
-                    
-                    cout << endl; 
+
+                    cout << endl;
                 }
             } else {
                 cout << "Error: Please create a sheet first (Option 2)." << endl;
@@ -891,12 +908,12 @@ void mainMenu() {
         }
 
         else if (choice == 6) {
-            viewCSV();   
+            viewCSV();
         }
 
         else if (choice == 7) {
             count_Rows();
-        }    
+        }
 
         else if (choice == 8) {
             if(isSheetCreated && !currentFileName.empty()) {
