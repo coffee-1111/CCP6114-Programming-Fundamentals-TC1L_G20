@@ -807,11 +807,12 @@ void deleteRow()
     cout << "--------------------------------" << endl;
 
     // Find StudentID column first
-    int studentIDColumn = findColumnByName("studentid");
+    int studentIDColumn = findColumnByName("studentid"); //looks for studentid
     if (studentIDColumn == -1) {
-        studentIDColumn = findColumnByName("id");
+        studentIDColumn = findColumnByName("id"); //looks for id
     }
     
+    //if studentid or id couldn't be found
     if (studentIDColumn == -1) {
         cout << "Error: Could not find StudentID column in the sheet!" << endl;
         cout << "Press Enter to continue...";
@@ -871,23 +872,26 @@ void deleteRow()
         
         // Ask if user wants to try again
         char tryAgain;
-        cout << "Do you want to try another StudentID? (y/n): ";
-        cin >> tryAgain;
-        
-        if (tryAgain == 'y' || tryAgain == 'Y') {
-            cin.ignore();
-            deleteRow(); // Recursive call to try again
-        } else if (tryAgain == 'n' || tryAgain == 'N') {
-            cin.ignore();
-            return;
-        } else {
-            cout << "Deletion cancelled." << endl;
-            cout << "Press Enter to continue...";
-            cin.ignore();
-            cin.get();
-            return;
+        while (tryAgain != 'y' && tryAgain != 'Y' && tryAgain != 'N' && tryAgain != 'n'){
+            cout << "Do you want to try another StudentID? (y/n): ";
+            cin >> tryAgain;
+            
+            if (tryAgain == 'y' || tryAgain == 'Y') {
+                cin.ignore();
+                deleteRow(); // Recursive call to try again
+                return;
+            } else if (tryAgain == 'n' || tryAgain == 'N') {
+                cout << "Deletion cancelled." << endl;
+                cout << "Press Enter to continue...";
+                cin.ignore();
+                cin.get();
+                return;
+            } else{
+                cout << "Enter either y or n" << endl;
+                cin.clear();  // Clear error state if needed
+                cin.ignore(1000, '\n');  // Clear invalid input
+            }
         }
-        return;
     }
 
     // Shift rows up starting from the target row
