@@ -153,11 +153,15 @@ bool readFromFile(string filename)
             }
 
             column_name[numcolumn] = col;
-            // Default type to TEXT when loading from file (since CSV doesn't store types)
-            column_type[numcolumn] = "TEXT";
-
-            // Auto-detect Status column for validation later
-            if(col == "Status" || col == "status") column_type[numcolumn] = "INT"; // Usually status is 0/1
+            // Since CSV file doesnt store column data type, now manually determine the type when loading the file.
+            string colLower = toLowercase(col);
+            // Auto-detect numeric columns like 'StudentID" and "Status" and assign them as INT type, then all the others as TEXT
+            if (colLower == "studentid")
+                column_type[numcolumn] = "INT";
+            else if (colLower == "status")
+                column_type[numcolumn] = "INT";
+            else 
+                column_type[numcolumn] = "TEXT";
 
             numcolumn++;
         }
