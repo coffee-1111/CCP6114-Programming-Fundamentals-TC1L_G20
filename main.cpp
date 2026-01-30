@@ -10,10 +10,10 @@
 // Member_4: 252UC242S4 | Lai Jia Han | lai.jia.han1@student.mmu.edu.my | 01110900316
 // *********************************************************
 // Task Distribution
-// Member_1: 
-// Member_2:
-// Member_3:
-// Member_4:
+// Member_1: Main menu, count rows function
+// Member_2: Reading from file, writing to file, screen output
+// Member_3: Update attendance rows, delete attendance rows & view updated sheet		
+// Member_4: Create school term (database) & view term name
 // *********************************************************
 
 
