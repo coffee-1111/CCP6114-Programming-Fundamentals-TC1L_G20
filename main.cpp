@@ -10,7 +10,7 @@
 // Member_4: 252UC242S4 | Lai Jia Han | lai.jia.han1@student.mmu.edu.my | 01110900316
 // *********************************************************
 // Task Distribution
-// Member_1:
+// Member_1: 
 // Member_2:
 // Member_3:
 // Member_4:
@@ -795,7 +795,6 @@ void deleteRow()
     if (numcolumn == 0 || nextRow == 0)
     {
         cout << "Error: No data available to delete!" << endl;
-        cout << "Press Enter to continue...";
         cin.get();
         return;
     }
@@ -1024,7 +1023,7 @@ void mainMenu() {
         cout << "      STUDENT ATTENDANCE TRACKER - MILESTONE 2" << endl;
         cout << "      Current Term: " << schoolTermName << endl;
         cout << "==============================================" << endl;
-        cout << "1. Create School Term" << endl;
+        cout << "1. Update School Term" << endl;
         cout << "2. Create Attendance Sheet" << endl;
         cout << "3. Insert Attendance Row" << endl;
         cout << "4. Update Attendance Row" << endl;
@@ -1044,13 +1043,22 @@ void mainMenu() {
         }
 
         if (choice == 1) {
-            if (schoolTermName != "Not Set") {
-                cout << "Error: School Term has already been created (" << schoolTermName << ")." << endl;
-            }
+            cout << "Current School Term: " << schoolTermName << endl;
+            cout << "Enter NEW School Term Name: ";
+    
+            string newTerm;
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); 
+            getline(cin, newTerm);
+
+            if (!newTerm.empty()) {
+                schoolTermName = newTerm;
+                saveTerm(schoolTermName); 
+                cout << "Database updated successfully!" << endl;
+                } 
             else {
-                schoolTerm();
-            }
-        }
+                cout << "Update cancelled. Term name cannot be empty." << endl;
+    }
+}
 
         else if (choice == 2) {
             if (isSheetCreated) {
