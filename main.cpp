@@ -89,6 +89,34 @@ int getValidColumn()
      return numcolumn;
 }
 
+// to convert string to lowercase
+string toLowercase(const string& str)
+{
+    string lowerStr = str;
+    for (char &c : lowerStr)
+    {
+        c = tolower(c);
+    }
+    return lowerStr;
+}
+
+// to find column index by name (case-insensitive)
+int findColumnByName(const string& columnName)
+{
+    string searchNameLower = toLowercase(columnName);
+    
+    for (int col = 0; col < numcolumn; col++)
+    {
+        string columnNameLower = toLowercase(column_name[col]);
+        
+        if (columnNameLower == searchNameLower)
+        {
+            return col;
+        }
+    }
+    return -1;
+}
+
 //------------------------
 // File I/O & Database Functions
 //------------------------
@@ -341,11 +369,13 @@ void createSheet()
 
 }
 
-
 void insertRow()
 {
     if (numcolumn == 0) {
         cout << "Error: Please create a sheet first!" << endl;
+        cout << "Press Enter to continue...";
+        cin.ignore();
+        cin.get();
         return;
     }
 
@@ -354,14 +384,20 @@ void insertRow()
     cout << "---------------------------\n";
 
     string input;
-
+    
+    // Find the StudentID column using your helper function
+    int studentIDColumn = findColumnByName("studentid");
+    if (studentIDColumn == -1) {
+        studentIDColumn = findColumnByName("id");  // Try alternative names
+    }
 
     for (int col = 0; col < numcolumn; col++) {
         bool validInput = false;
 
         while (!validInput) {
             // Check if column name is "Status" to show special prompt
-            if (column_name[col] == "Status" || column_name[col] == "status") {
+            string colNameLower = toLowercase(column_name[col]);
+            if (colNameLower == "status") {
                 cout << "Enter Status (Present: 1, Absent: 0): ";
             } else {
                 cout << "Enter " << column_name[col] << ": ";
@@ -372,7 +408,7 @@ void insertRow()
                 getline(cin, input);
 
                 // Special validation for Status column
-                if (column_name[col] == "Status" || column_name[col] == "status") {
+                if (colNameLower == "status") {
                     if (isNumber(input) && (input == "0" || input == "1")) {
                         attendanceSheet[nextRow][col] = input;
                         validInput = true;
@@ -383,8 +419,43 @@ void insertRow()
                 else {
                     // Normal INT validation for other columns
                     if (isNumber(input)) {
-                        attendanceSheet[nextRow][col] = input;
-                        validInput = true;
+                        // Check if this is the StudentID column and validate for duplicates
+                        if (col == studentIDColumn) {
+                            bool isDuplicate = false;
+                            
+                            // Check all existing rows for this StudentID
+                            for (int row = 0; row < nextRow; row++) {
+                                try {
+                                    if (stoi(attendanceSheet[row][col]) == stoi(input)) {
+                                        isDuplicate = true;
+                                        cout << "Error: StudentID " << input << " already exists for student: ";
+                                        
+                                        // Show which student has this ID (find and show name)
+                                        int nameCol = findColumnByName("name");
+                                        if (nameCol != -1 && row < nextRow) {
+                                            cout << attendanceSheet[row][nameCol];
+                                        }
+                                        cout << endl;
+                                        break;
+                                    }
+                                }
+                                catch (...) {
+                                    // If stoi fails, skip this row
+                                    continue;
+                                }
+                            }
+                            
+                            if (isDuplicate) {
+                                cout << "Please enter a different StudentID" << endl;
+                            } else {
+                                attendanceSheet[nextRow][col] = input;
+                                validInput = true;
+                            }
+                        } else {
+                            // Not StudentID column, just accept it
+                            attendanceSheet[nextRow][col] = input;
+                            validInput = true;
+                        }
                     } else {
                         cout << "Error: Must be a number. Please enter again." << endl;
                     }
@@ -393,8 +464,8 @@ void insertRow()
             else if (column_type[col] == "TEXT") {
                 getline(cin, input);
 
-                // Special validation for TEXT Status column
-                if (column_name[col] == "Status" || column_name[col] == "status") {
+                // Special validation for Status column
+                if (colNameLower == "status") {
                     if (input == "0" || input == "1") {
                         attendanceSheet[nextRow][col] = input;
                         validInput = true;
@@ -406,11 +477,40 @@ void insertRow()
                     // Normal TEXT validation for other columns
                     if (input.empty()) {
                         cout << "Error: Cannot be empty. Please enter again." << endl;
-                    } else if (!onlyLetters(input)) {
+                    } else if (!onlyLetters(input) && col != studentIDColumn) {
+                        // Allow numbers in StudentID column even if it's TEXT type
                         cout << "Error: Must contain only letters (a-z, A-Z) and spaces. Please enter again." << endl;
                     } else {
-                        attendanceSheet[nextRow][col] = input;
-                        validInput = true;
+                        // Check for duplicate StudentID if this is the StudentID column
+                        if (col == studentIDColumn) {
+                            bool isDuplicate = false;
+                            
+                            for (int row = 0; row < nextRow; row++) {
+                                if (attendanceSheet[row][col] == input) {
+                                    isDuplicate = true;
+                                    cout << "Error: StudentID " << input << " already exists for student: ";
+                                    
+                                    // Show which student has this ID
+                                    int nameCol = findColumnByName("name");
+                                    if (nameCol != -1 && row < nextRow) {
+                                        cout << attendanceSheet[row][nameCol];
+                                    }
+                                    cout << endl;
+                                    break;
+                                }
+                            }
+                            
+                            if (isDuplicate) {
+                                cout << "Please enter a different StudentID: ";
+                            } else {
+                                attendanceSheet[nextRow][col] = input;
+                                validInput = true;
+                            }
+                        } else {
+                            // Not StudentID column, just accept it
+                            attendanceSheet[nextRow][col] = input;
+                            validInput = true;
+                        }
                     }
                 }
             }
@@ -493,61 +593,113 @@ void updateRow()
         cout << "Error: No data available to update!";
         return;
     }
+
+    viewCSV();
+    
     cout << "--------------------------------" << endl;
     cout << "Update Attendance Row" << endl;
     cout << "--------------------------------" << endl;
 
-    viewCSV();
-
-    cout << "Enter StudentID to update: " << endl;
-    cin >> studentID;
+    cout << "Enter StudentID to update: ";
+    
+    // First, validate the input is a number
+    string studentIDStr;
+    cin >> studentIDStr;
+    
+    if (!isNumber) {
+        cout << "Error: StudentID must be a number!" << endl;
+        cout << "Press Enter to continue...";
+        cin.ignore();
+        cin.get();
+        return;
+    }
+    
+    studentID = stoi(studentIDStr);
 
     targetRow = -1;
     row = 0;
 
+    // Search through the first column (assuming StudentID is in first column)
+    // Or you need to know which column contains StudentID
     while(row < nextRow)
     {
-        col = 0;
-        while (col < numcolumn)
-        {
-            if (stoi(attendanceSheet[row][col]) == studentID)
+        // Try to convert and compare - handle cases where cell might not be a number
+        try {
+            if (stoi(attendanceSheet[row][0]) == studentID)  // Assuming StudentID is in column 0
             {
                 targetRow = row;
                 break;
             }
-            col++;
+        } 
+        catch (const std::invalid_argument& e) {
+            // Cell doesn't contain a valid number, skip it
+            row++;
+            continue;
         }
+        catch (const std::out_of_range& e) {
+            // Number is too large, skip it
+            row++;
+            continue;
+        }
+        
+        row++;
+    }
 
-        if (targetRow != -1)
+    // Alternative search if StudentID might be in different columns
+    while(row < nextRow && targetRow == -1)
+    {
+        col = 0;
+        while (col < numcolumn)
         {
-            break;
+            try {
+                if (stoi(attendanceSheet[row][col]) == studentID)
+                {
+                    targetRow = row;
+                    break;
+                }
+            }
+            catch (...) {
+                // Not a number in this cell, continue checking
+            }
+            col++;
         }
         row++;
     }
 
     if (targetRow == -1)
     {
-        cout << "Error: StudentID not found" << endl;
+        cout << "Error: StudentID " << studentID << " not found" << endl;
+        cout << "Press Enter to continue...";
+        cin.ignore();
+        cin.get();
         return;
     }
 
+    // Rest of your existing code continues here...
     cout << "Choose one to update" << endl;
     cout << "1. Name" << endl;
     cout << "2. Status" << endl;
     cout << "-1. Exit" << endl;
 
     int choice = 0;
-
-    while (choice!= 1 && choice != 2 && choice != -1)
+    
+    while (choice != 1 && choice != 2 && choice != -1)
     {
         cout << "Enter choice (1, 2, -1): ";
-        cin >> choice;
-
-        if (!isNumber(to_string(choice)))
+        
+        // Handle non-numeric input
+        if (!(cin >> choice))
         {
-            cout << "Error: Please enter a number" << endl;
+            cout << "Error: Please enter a valid number" << endl;
+            cin.clear(); // Clear error flag
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
             choice = 0;
             continue;
+        }
+        
+        if (choice != 1 && choice != 2 && choice != -1)
+        {
+            cout << "Error: Invalid choice. Please enter 1, 2, or -1" << endl;
         }
     }
 
@@ -559,64 +711,58 @@ void updateRow()
 
     if (choice == 1)
     {
-        nameColumn = -1;
-        col = 0;
-
-        while (col < numcolumn)
-        {
-            if (column_name[col] == "Name" || column_name[col] == "name")
-            {
-                nameColumn = col;
-                break;
-            }
-            col++;
-        }
-
+        nameColumn = findColumnByName("name");
         if (nameColumn == -1)
         {
             cout << "Error: Name column not found" << endl;
             return;
         }
 
+        // Display current name again
+        cout << "Current Name: " << attendanceSheet[targetRow][nameColumn] << endl;
+        
         string newname;
         cout << "Enter new name: ";
-        cin >> newname;
+        cin.ignore(); // Clear newline from previous input
+        getline(cin, newname);
 
-        while (newname == " " || !onlyLetters(newname))
+        // Validate name - keep it simple, just check empty
+        while (newname.empty() || !onlyLetters(newname))
         {
-            if (newname == " "){
+            if (newname.empty()){
                 cout << "Error: Name cannot be empty" << endl;
-            }else{
+            } else {
                 cout << "Error: Name must contain only letters and spaces" << endl;
             }
-
+            
+            cout << "Current Name: " << attendanceSheet[targetRow][nameColumn] << endl;
             cout << "Enter new name: ";
-            cin >> newname;
+            getline(cin, newname);
         }
 
+        string oldName = attendanceSheet[targetRow][nameColumn];
         attendanceSheet[targetRow][nameColumn] = newname;
-        cout << "Name updated successfully";
-    }else if (choice == 2)
+        cout << "Name updated successfully from '" 
+             << oldName << "' to '" 
+             << newname << "'" << endl;
+    }
+    else if (choice == 2)
     {
-        int statusColumn = -1;
-        col = 0;
-
-        while (col < numcolumn)
-        {
-            if (column_name[col] == "Status" || column_name[col] == "status")
-            {
-                statusColumn = col;
-                break;
-            }
-            col++;
-        }
-
+        int statusColumn = findColumnByName("status");
         if (statusColumn == -1)
         {
             cout << "Error: Status column not found" << endl;
             return;
         }
 
+        // Display current status again with meaningful text
+        string currentStatus = attendanceSheet[targetRow][statusColumn];
+        string currentStatusText = (currentStatus == "1") ? "Present" : 
+                                  (currentStatus == "0") ? "Absent" : 
+                                  currentStatus;
+        
+        cout << "Current Status: " << currentStatusText << " (" << currentStatus << ")" << endl;
+        
         string newStatus;
         cout << "Enter new Status (0=Absent, 1=Present): ";
         cin >> newStatus;
@@ -624,80 +770,144 @@ void updateRow()
         while (newStatus != "0" && newStatus != "1")
         {
             cout << "Error: Please enter 0 (Absent) or 1 (Present) only." << endl;
-            cout << "Enter new Status: " << endl;
+            cout << "Current Status: " << currentStatusText << " (" << currentStatus << ")" << endl;
+            cout << "Enter new Status: ";
             cin >> newStatus;
         }
 
+        string newStatusText = (newStatus == "1") ? "Present" : "Absent";
         attendanceSheet[targetRow][statusColumn] = newStatus;
-        cout << "Status updated successfully" << endl;
+        
+        cout << "Status updated successfully from '" 
+             << currentStatusText << "' (" << currentStatus 
+             << ") to '" << newStatusText << "' (" << newStatus << ")" << endl;
     }
 
-    cout << "Updated sheet: " << endl;
+    cout << "\nUpdated sheet: " << endl;
+    
     viewCSV();
+    cout << "Press Enter to continue...";
+    cin.get();
 }
 
 void deleteRow()
 {
-    int studentID, targetRow, row, col, nameColumn;
-
     if (numcolumn == 0 || nextRow == 0)
     {
         cout << "Error: No data available to delete!" << endl;
+        cout << "Press Enter to continue...";
+        cin.get();
         return;
     }
-    cout << "--------------------------------";
-    cout << "Delete Attendance Row";
-    cout << "--------------------------------";
 
     viewCSV();
+    
+    cout << "--------------------------------" << endl;
+    cout << "Delete Attendance Row" << endl;
+    cout << "--------------------------------" << endl;
 
-    cout << "Enter StudentID to delete: ";
-    cin >> studentID;
+    // Find StudentID column first
+    int studentIDColumn = findColumnByName("studentid");
+    if (studentIDColumn == -1) {
+        studentIDColumn = findColumnByName("id");
+    }
+    
+    if (studentIDColumn == -1) {
+        cout << "Error: Could not find StudentID column in the sheet!" << endl;
+        cout << "Press Enter to continue...";
+        cin.ignore();
+        cin.get();
+        return;
+    }
 
-    targetRow = -1;
-    row = 0;
-    while (row < nextRow)
+    // Loop for StudentID input
+    int studentID = 0;
+    bool validStudentID = false;
+    while (!validStudentID)
     {
-        col = 0;
-        while (col < numcolumn)
-        {
-            if (stoi(attendanceSheet[row][col]) == studentID)
+        cout << "Enter StudentID to delete (or -1 to cancel): ";
+        
+        if (!(cin >> studentID)) {
+            cout << "Error: Invalid input! Please enter a number." << endl;
+            cin.clear();
+            cin.ignore(1000, '\n');
+            continue;
+        }
+        
+        if (studentID == -1) {
+            cout << "Deletion cancelled." << endl;
+            cout << "Press Enter to continue...";
+            cin.ignore();
+            cin.get();
+            return;
+        }
+        
+        validStudentID = true;
+    }
+
+    int targetRow = -1;
+    
+    // Search ONLY in the StudentID column
+    // Start from row 0 and check each row
+    for (int row = 0; row < nextRow; row++)
+    {
+        try {
+            int currentID = stoi(attendanceSheet[row][studentIDColumn]);
+            if (currentID == studentID)
             {
                 targetRow = row;
                 break;
             }
-            col++;
         }
-        if (targetRow != -1)
-        {
-            break;
+        catch (...) {
+            // Skip non-numeric cells (like header row if it contains "studentid")
+            continue;
         }
-        row++;
+    }
 
-        if (targetRow == -1)
-        {
-            cout << "Error: StudentID not found" << endl;
+    if (targetRow == -1)
+    {
+        cout << "Error: StudentID " << studentID << " not found!" << endl;
+        
+        // Ask if user wants to try again
+        char tryAgain;
+        cout << "Do you want to try another StudentID? (y/n): ";
+        cin >> tryAgain;
+        
+        if (tryAgain == 'y' || tryAgain == 'Y') {
+            cin.ignore();
+            deleteRow(); // Recursive call to try again
+        } else if (tryAgain == 'n' || tryAgain == 'N') {
+            cin.ignore();
+            return;
+        } else {
+            cout << "Deletion cancelled." << endl;
+            cout << "Press Enter to continue...";
+            cin.ignore();
+            cin.get();
             return;
         }
-
-        row = targetRow;
-        while (row < nextRow-1)
-        {
-            col = 0;
-            while (col < numcolumn)
-            {
-                attendanceSheet[row][col] = attendanceSheet[row+1][col];
-                col++;
-            }
-            row++;
-        }
-
-        nextRow --;
-
-        cout << "Row deleted successfully" << endl;
-        cout << "Updated sheet: " << endl;
-        viewCSV();
+        return;
     }
+
+    // Shift rows up starting from the target row
+    for (int row = targetRow; row < nextRow - 1; row++)
+    {
+        for (int col = 0; col < numcolumn; col++)
+        {
+            attendanceSheet[row][col] = attendanceSheet[row + 1][col];
+        }
+    }
+
+    // Decrease the row count
+    nextRow--;
+
+    cout << "\nRow deleted successfully!" << endl;
+    cout << "Updated sheet: " << endl;
+    viewCSV();
+    cout << "Press Enter to continue...";
+    cin.ignore();
+    cin.get();
 }
 
 //------------------------
