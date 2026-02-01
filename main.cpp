@@ -50,6 +50,7 @@ bool isSheetCreated = false;
 
 //for insertRow - check if the input only contains numbers
 bool isNumber(const string& s) {
+    if (s.empty()) return false; //prevent empty input
     for (char c : s) {
         if (!isdigit(c)) return false;
     }
@@ -153,8 +154,13 @@ bool readFromFile(string filename)
             }
 
             column_name[numcolumn] = col;
-            // Default type to TEXT when loading from file (since CSV doesn't store types)
-            column_type[numcolumn] = "TEXT";
+            
+            string lowerCol = toLowercase(col); 
+            if (lowerCol == "studentid" || lowerCol == "id" || lowerCol == "status") {
+                column_type[numcolumn] = "INT"; 
+            } else {
+                column_type[numcolumn] = "TEXT";
+            }
 
             // Auto-detect Status column for validation later
             if(col == "Status" || col == "status") column_type[numcolumn] = "INT"; // Usually status is 0/1
@@ -1012,7 +1018,6 @@ void schoolTerm() {
 void mainMenu() {
 
     int choice;
-    bool isSheetCreated = false;
 
     // 1. Initial Setup
     setupDatabase();
@@ -1151,6 +1156,11 @@ void mainMenu() {
                 cout << "Database auto-saved to: " << currentFileName << endl;
             }
             cout << "Exiting program..." << endl;
+            cout << "Press Enter to close this window..." << endl;
+
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); 
+            cin.get();
+
             break;
         }
 
