@@ -1,2 +1,0 @@
-week1.csv
-week2.csv

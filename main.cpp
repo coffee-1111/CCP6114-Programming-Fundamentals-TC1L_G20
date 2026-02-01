@@ -42,7 +42,7 @@ int nextRow = 0;
 //3.for database
 string schoolTermName = "Not Set";
 string currentFileName = ""; // To track the currently open file
-
+bool isSheetCreated = false;
 
 //-------------------------
 //Support Functions
@@ -183,6 +183,7 @@ bool readFromFile(string filename)
 
     file.close();
     currentFileName = filename; // Remember which file we are working on
+    isSheetCreated = true;
     cout << "Successfully loaded: " << filename << endl;
     return true;
 }
@@ -293,13 +294,13 @@ void createSheet()
 {
    string sheet_name;
 
-   cout << "Enter attendence sheet name:" << endl;
+   cout << "Enter attendence sheet name to save as file:" << endl;
    getline(cin >> ws, sheet_name) ;
 
    while(sheet_name.empty()) ///user just enter and doesn't input anything
    {
       cout << "Sheet name cannot be empty! Please enter again." << endl;
-      cout << "Enter attendence sheet name:" << endl;
+      cout << "Enter attendence sheet name to save as file:" << endl;
       getline(cin, sheet_name) ;
    }
 
@@ -354,8 +355,9 @@ void createSheet()
    nextRow = 0;
 
    cout << "Sheet Structure created successfully" << endl << endl ;
-   string filename = sheet_name + ".csv";
-   writeToFile(filename);
+   currentFileName = sheet_name + ".csv";
+   isSheetCreated = true;
+   writeToFile(currentFileName);
 
    cout << "============= Summary Columns ===============" << endl;
    int j = 0;
@@ -1138,15 +1140,18 @@ void mainMenu() {
         }
 
         else if (choice == 8) {
-            if(isSheetCreated && !currentFileName.empty()) {
+            if(isSheetCreated) {
+               if (currentFileName.empty()) {
+                    cout << "File name missing. Enter filename to save: ";
+                    cin >> currentFileName;
+                    currentFileName = currentFileName + ".csv";
+                }
+
                 writeToFile(currentFileName);
-            } else if (isSheetCreated) {
-                // Should not happen if createSheet logic is correct, but fail-safe
-                cout << "Enter filename to save: ";
-                cin >> currentFileName;
-                writeToFile(currentFileName + ".csv");
+                cout << "Database auto-saved to: " << currentFileName << endl;
             }
             cout << "Exiting program..." << endl;
+            break;
         }
 
         else {
