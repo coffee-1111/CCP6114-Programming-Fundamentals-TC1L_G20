@@ -613,14 +613,6 @@ void updateRow()
     // First, validate the input is a number
     string studentIDStr;
     cin >> studentIDStr;
-    
-    if (!isNumber) {
-        cout << "Error: StudentID must be a number!" << endl;
-        cout << "Press Enter to continue...";
-        cin.ignore();
-        cin.get();
-        return;
-    }
 
     try{
         studentID = stoi(studentIDStr);
