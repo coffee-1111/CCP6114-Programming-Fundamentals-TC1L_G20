@@ -621,14 +621,21 @@ void updateRow()
         cin.get();
         return;
     }
-    
-    studentID = stoi(studentIDStr);
+
+    try{
+        studentID = stoi(studentIDStr);
+    } catch (const std::exception& e) {
+        cout << "Error: Invalid StudentID format!" << endl;
+        cout << "Press Enter to continue...";
+        cin.ignore();
+        cin.get();
+        return;
+    }
 
     targetRow = -1;
     row = 0;
 
     // Search through the first column (assuming StudentID is in first column)
-    // Or you need to know which column contains StudentID
     while(row < nextRow)
     {
         // Try to convert and compare - handle cases where cell might not be a number
@@ -796,6 +803,7 @@ void updateRow()
     viewCSV();
     cout << "Press Enter to continue...";
     cin.get();
+    return;
 }
 
 void deleteRow()
