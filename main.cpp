@@ -908,7 +908,7 @@ void mainMenu() {
 
         if (choice == 1) {
             cout << "Current School Term: " << schoolTermName << endl;
-            cout << "Enter NEW School Term Name: ";
+            cout << "Enter NEW School Term Name (Press Enter to cancel): ";
     
             string newTerm;
             cin.ignore(numeric_limits<streamsize>::max(), '\n'); 
@@ -920,7 +920,7 @@ void mainMenu() {
                 cout << "Database updated successfully!" << endl;
                 } 
             else {
-                cout << "Update cancelled. Term name cannot be empty." << endl;
+                cout << "Update cancelled." << endl;
     }
 }
 
