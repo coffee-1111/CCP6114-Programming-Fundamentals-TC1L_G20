@@ -1006,7 +1006,7 @@ void mainMenu() {
                 }
 
                 writeToFile(currentFileName);
-                cout << "Database auto-saved to: " << currentFileName << endl;
+                cout << "File name: " << currentFileName << endl;
             }
             cout << "Exiting program..." << endl;
             cout << "Press Enter to close this window..." << endl;
