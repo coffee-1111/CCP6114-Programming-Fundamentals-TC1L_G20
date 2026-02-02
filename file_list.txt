@@ -1,3 +1,0 @@
-w1.csv
-w2.csv
-w3.csv.csv
