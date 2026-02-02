@@ -101,18 +101,22 @@ string toLowercase(const string& str)
     return lowerStr;
 }
 
-// to find column index by name (case-insensitive)
-int findColumnByName(const string& columnName)
-{
-    string searchNameLower = toLowercase(columnName);
-    
-    for (int col = 0; col < numcolumn; col++)
-    {
-        string columnNameLower = toLowercase(column_name[col]);
-        
-        if (columnNameLower == searchNameLower)
-        {
-            return col;
+string normalize(const string& s) {
+    string result;
+    for (char c : s) {
+        if (c != ' ' && c != '_') {
+            result += tolower(c);
+        }
+    }
+    return result;
+}
+
+int findColumnByName(string search) {
+    search = normalize(search);
+
+    for (int i = 0; i < numcolumn; i++) {
+        if (normalize(column_name[i]) == search) {
+            return i;
         }
     }
     return -1;
