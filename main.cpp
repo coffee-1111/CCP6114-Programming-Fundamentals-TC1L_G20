@@ -182,15 +182,20 @@ bool readFromFile(string filename)
 
             column_name[numcolumn] = col;
             
-            string lowerCol = toLowercase(col); 
-            if (lowerCol == "studentid" || lowerCol == "id" || lowerCol == "status") {
-                column_type[numcolumn] = "INT"; 
-            } else {
-                column_type[numcolumn] = "TEXT";
-            }
+           string lowerCol = toLowercase(col);
 
-            // Auto-detect Status column for validation later
-            if(col == "Status" || col == "status") column_type[numcolumn] = "INT"; // Usually status is 0/1
+if (lowerCol == "status") {
+    column_type[numcolumn] = "INT";   // Status must be 0 or 1
+}
+else if (lowerCol == "name") {
+    column_type[numcolumn] = "TEXT";  // Name is text (validated later)
+}
+else if (lowerCol == "studentid" || lowerCol == "id") {
+    column_type[numcolumn] = "TEXT";  // StudentID treated as string
+}
+else {
+    column_type[numcolumn] = "TEXT";  // Default
+}
 
             numcolumn++;
         }
