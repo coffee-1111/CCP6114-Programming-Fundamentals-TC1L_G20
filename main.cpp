@@ -336,13 +336,13 @@ void createSheet()
 {
    string sheet_name;
 
-   cout << "Enter attendence sheet name to save as file:" << endl;
-   getline(cin >> ws, sheet_name) ;
+   cout << "Enter attendence sheet name to save as file (use _ to represent space):" << endl;
+   getline(cin, sheet_name) ;
 
    while(sheet_name.empty()) ///user just enter and doesn't input anything
    {
       cout << "Sheet name cannot be empty! Please enter again." << endl;
-      cout << "Enter attendence sheet name to save as file:" << endl;
+      cout << "Enter attendence sheet name to save as file (use _ to represent space):" << endl;
       getline(cin, sheet_name) ;
    }
 
@@ -799,11 +799,11 @@ void setupDatabase()
   {
     cout << "No saved database found. Initializing..." << endl;
     cout << "Enter School Term Name: ";
-    getline(cin >> ws, schoolTermName);
+    getline(cin, schoolTermName);
     while(schoolTermName.empty())
     {
       cout << "Invalid term name. Please enter again: ";
-      getline(cin >> ws, schoolTermName);
+      getline(cin, schoolTermName);
     }
     saveTerm(schoolTermName);
     cout << "Database " << schoolTermName <<" created and loaded." << endl << endl;
@@ -824,7 +824,7 @@ void fileLoadDatabase()
 
   // load filename
   string filename;
-  cout << endl << "Enter filename to load(or -1 to skip to Menu):" << endl;
+  cout << endl << "Enter filename to load (add .csv when enter filename)/(or -1 to skip to Menu):" << endl;
   cin >> filename;
 
   if (filename == "-1")
@@ -836,7 +836,7 @@ void fileLoadDatabase()
     bool file_found = readFromFile(filename);
     while (!file_found)
     {
-      cout <<"Please enter again (or -1 to skip to Menu):" << endl;
+      cout <<"Please enter again (add .csv when enter filename) (or -1 to skip to Menu):" << endl;
       cin >> filename;
 
       if (filename == "-1")
