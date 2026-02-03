@@ -337,7 +337,7 @@ void createSheet()
    string sheet_name;
 
    cout << "Enter attendence sheet name to save as file (use _ to represent space):" << endl;
-   getline(cin, sheet_name) ;
+   getline(cin >> ws, sheet_name) ;
 
    while(sheet_name.empty()) ///user just enter and doesn't input anything
    {
